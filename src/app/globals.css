@@ -1,0 +1,376 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ─── */
+:root {
+  --background: #f4f6fb;
+  --foreground: #0f0f12;
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.72);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.07);
+  --accent-blue: #0066ff;
+  --accent-cyan: #00c6ff;
+  --accent-indigo: #4f46e5;
+
+  /* Cursor-driven directional light — updated by JS */
+  --cursor-nx: 0.5;
+  --cursor-ny: 0;
+  --shine-angle: 135deg;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* { box-sizing: border-box; }
+
+/* scroll-behavior intentionally omitted — Lenis handles smooth scroll */
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow-x: hidden;
+  cursor: default;
+}
+
+/* Ensure cursor is always visible — even inside modals and overlays */
+*, *::before, *::after {
+  cursor: inherit;
+}
+
+a, button, [role="button"], label, select, input, textarea {
+  cursor: pointer;
+}
+
+/* ═══════════════════════════════════════════════
+   LIQUID GLASS — VisionOS-inspired real glass
+   ═══════════════════════════════════════════════ */
+
+/* Base glass utility */
+.glass {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.68);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+/* Heavy glass for modals */
+.glass-strong {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(40px) saturate(220%);
+  -webkit-backdrop-filter: blur(40px) saturate(220%);
+  border: 1px solid rgba(255, 255, 255, 0.88);
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* ── Liquid Glass Card — the real deal ── */
+.glass-card {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.58);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.76);
+  box-shadow:
+    0 4px 24px rgba(0, 0, 0, 0.055),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    0 -1px 0 rgba(255, 255, 255, 0.25) inset;
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.3, 0.64, 1),
+    box-shadow 0.35s ease,
+    background 0.3s ease;
+}
+
+/* Directional specular shine — moves with cursor via CSS vars */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    var(--shine-angle),
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.18) 35%,
+    rgba(255, 255, 255, 0.07) 65%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+  transition: background 0.25s ease;
+}
+
+/* Chromatic refraction fringe — blue-red split at glass edges */
+.glass-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(
+      calc(var(--shine-angle) + 8deg),
+      rgba(0, 120, 255, 0.045) 0%,
+      transparent 45%
+    ),
+    linear-gradient(
+      calc(var(--shine-angle) - 8deg),
+      rgba(120, 0, 255, 0.03) 0%,
+      transparent 45%
+    );
+  pointer-events: none;
+  z-index: 2;
+  transition: background 0.25s ease;
+}
+
+/* Top edge specular highlight */
+.glass-card > *:first-child {
+  position: relative;
+  z-index: 3;
+}
+
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow:
+    0 16px 48px rgba(0, 0, 0, 0.10),
+    0 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 -1px 0 rgba(255, 255, 255, 0.3) inset;
+  transform: translateY(-4px);
+}
+
+/* Edge glow on hover */
+.glass-card:hover::before {
+  background: linear-gradient(
+    var(--shine-angle),
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.28) 35%,
+    rgba(255, 255, 255, 0.10) 65%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+/* ─── Glass Liquid (alias for chips, nav, etc.) ─── */
+.glass-liquid {
+  position: relative;
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.78);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  overflow: hidden;
+}
+
+.glass-liquid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    var(--shine-angle),
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.14) 40%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  pointer-events: none;
+  transition: background 0.25s ease;
+}
+
+/* ─── Gradient Text ─── */
+.gradient-text {
+  background: linear-gradient(135deg, #0066ff 0%, #00c6ff 50%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-soft {
+  background: linear-gradient(135deg, #0f0f12 0%, #2d3748 60%, #4a5568 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(0, 102, 255, 0.2); border-radius: 2px; }
+
+/* ─── Selection ─── */
+::selection { background: rgba(0, 102, 255, 0.12); color: #0066ff; }
+
+/* ─── Typography ─── */
+.text-display {
+  font-size: clamp(3.2rem, 8.5vw, 7.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 0.93;
+}
+
+.text-headline {
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+}
+
+.text-title {
+  font-size: clamp(1.25rem, 2.5vw, 1.875rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* ─── Section padding ─── */
+.section-pad { padding-top: 7rem; padding-bottom: 7rem; }
+
+/* ═══════════════════════════════════════════════
+   KEYFRAME ANIMATIONS
+   ═══════════════════════════════════════════════ */
+
+@keyframes blob-drift {
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  25%       { transform: translate(50px, -40px) scale(1.06) rotate(3deg); }
+  50%       { transform: translate(-20px, 30px) scale(0.97) rotate(-2deg); }
+  75%       { transform: translate(30px, 10px) scale(1.03) rotate(1deg); }
+}
+
+@keyframes blob-drift-alt {
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  25%       { transform: translate(-50px, 25px) scale(1.05) rotate(-3deg); }
+  50%       { transform: translate(35px, -20px) scale(0.96) rotate(2deg); }
+  75%       { transform: translate(-15px, -10px) scale(1.02) rotate(-1deg); }
+}
+
+@keyframes blob-drift-c {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(20px, -25px) scale(1.08); }
+}
+
+@keyframes caustic-drift {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 0.45;
+  }
+  33% {
+    transform: translate(30px, -20px) rotate(60deg) scale(1.15);
+    opacity: 0.65;
+  }
+  66% {
+    transform: translate(-15px, 25px) rotate(120deg) scale(0.9);
+    opacity: 0.35;
+  }
+}
+
+@keyframes caustic-drift-b {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg) scale(1);
+    opacity: 0.3;
+  }
+  40% {
+    transform: translate(-40px, 15px) rotate(-80deg) scale(1.2);
+    opacity: 0.55;
+  }
+  80% {
+    transform: translate(25px, -30px) rotate(40deg) scale(0.85);
+    opacity: 0.25;
+  }
+}
+
+@keyframes liquid-streak {
+  0%   { transform: translateX(-120%) skewX(-15deg); opacity: 0; }
+  10%  { opacity: 0.4; }
+  90%  { opacity: 0.2; }
+  100% { transform: translateX(220%) skewX(-15deg); opacity: 0; }
+}
+
+@keyframes mesh-drift {
+  0%, 100% { transform: translate(0, 0); }
+  50%       { transform: translate(8px, 5px); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50%       { transform: translateY(-12px) rotate(1.5deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.04); }
+}
+
+@keyframes particle-drift {
+  0%   { transform: translateY(100vh) translateX(0); opacity: 0; }
+  8%   { opacity: 0.8; }
+  92%  { opacity: 0.5; }
+  100% { transform: translateY(-10vh) translateX(var(--drift)); opacity: 0; }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.animate-blob      { animation: blob-drift     20s ease-in-out infinite; }
+.animate-blob-alt  { animation: blob-drift-alt 24s ease-in-out infinite; }
+.animate-blob-c    { animation: blob-drift-c   28s ease-in-out infinite; }
+.animate-float-slow { animation: float-slow 8s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
+.animate-spin-slow  { animation: spin-slow 20s linear infinite; }
+
+/* ─── Reduced motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Chip ─── */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: rgba(0, 102, 255, 0.07);
+  border: 1px solid rgba(0, 102, 255, 0.14);
+  color: #0052cc;
+  transition: all 0.2s ease;
+}
+
+.chip:hover {
+  background: rgba(0, 102, 255, 0.13);
+  border-color: rgba(0, 102, 255, 0.28);
+  transform: translateY(-1px);
+}
+
+/* ─── Glow button ─── */
+.btn-glow { position: relative; overflow: hidden; }
+.btn-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.15);
+  transition: opacity 0.2s ease;
+}
+.btn-glow:hover::after { opacity: 1; }
+
+/* ─── Timeline line ─── */
+.timeline-line {
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(0, 102, 255, 0.35),
+    rgba(0, 198, 255, 0.35),
+    transparent
+  );
+}
