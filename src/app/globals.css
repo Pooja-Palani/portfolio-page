@@ -2,7 +2,7 @@
 
 /* ─── Design Tokens ─── */
 :root {
-  --background: #f4f6fb;
+  --background: #F6F7F9;
   --foreground: #0f0f12;
   --glass-bg: rgba(255, 255, 255, 0.55);
   --glass-border: rgba(255, 255, 255, 0.72);

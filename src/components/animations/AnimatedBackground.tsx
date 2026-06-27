@@ -140,8 +140,8 @@ export function AnimatedBackground() {
   return (
     <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none" aria-hidden>
 
-      {/* L1: Cool off-white base */}
-      <div className="absolute inset-0 bg-[#f4f6fb]" />
+      {/* L1: Warm off-white base */}
+      <div className="absolute inset-0 bg-[#F6F7F9]" />
 
       {/* L2: Large radial gradient blobs */}
       {/* Blob A — top-left, blue */}
@@ -178,15 +178,13 @@ export function AnimatedBackground() {
         }}
       />
 
-      {/* L3: Subtle mesh grid */}
+      {/* L3: Premium dot-grid mesh — subtle dot matrix for the full page */}
       <div
         className="absolute inset-0"
         style={{
-          backgroundImage:
-            "linear-gradient(rgba(0,102,255,0.022) 1px, transparent 1px)," +
-            "linear-gradient(90deg, rgba(0,102,255,0.022) 1px, transparent 1px)",
-          backgroundSize: "72px 72px",
-          animation: "mesh-drift 20s ease-in-out infinite",
+          backgroundImage: "radial-gradient(circle, rgba(0,80,200,0.075) 1px, transparent 1px)",
+          backgroundSize: "30px 30px",
+          opacity: 0.55,
         }}
       />
 
@@ -236,7 +234,7 @@ export function AnimatedBackground() {
       <div
         className="absolute inset-0"
         style={{
-          background: "radial-gradient(ellipse 80% 70% at 50% 0%, transparent 60%, rgba(244,246,251,0.45) 100%)",
+          background: "radial-gradient(ellipse 80% 70% at 50% 0%, transparent 60%, rgba(246,247,249,0.45) 100%)",
         }}
       />
     </div>
